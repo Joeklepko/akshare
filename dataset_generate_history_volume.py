@@ -5,8 +5,7 @@ import pickle
 
 from get_stop_date import get_stop_all_info
 
-pre_stop1 = 50
-pre_stop2 = 10
+pre_stop1 = 10
 af_stop = 10
 stop_ruse_day = 20
 
@@ -21,26 +20,23 @@ def get_dataset(i):
     current_up_down = stock_data.iloc[i, 9]
     if current_up_down > 9 or current_up_down < -9:
         return []
-    current_price = stock_data.iloc[i, 3] + 0.001
-    end_price = max(stock_data.iloc[i: i + af_stop, 3])
+    current_price = stock_data.iloc[i, 3] + 0.0001
+    end_price = max(stock_data.iloc[i:i + af_stop, 3])
     up_down = (end_price / current_price - 1)*100
     if up_down < 20 and up_down > -20:
         return []
-    max_price1 = max(stock_data.iloc[i - pre_stop1:i, 4])
-    max_date1 = pre_stop1 - list(stock_data.iloc[i - pre_stop1:i, 4]).index(max_price1)
-    max_price2 = max(stock_data.iloc[i - pre_stop2:i, 4])
-    max_date2 = pre_stop2 - list(stock_data.iloc[i - pre_stop2:i, 4]).index(max_price2)
+    price_hist = list(stock_data.iloc[i - pre_stop1:i, 4])
+    price_ratio = [x/(price_hist[0] + 0.001) for x in price_hist]
+    volume_hist = list(stock_data.iloc[i - pre_stop1:i, 7])
+    volume_ratio = [x/(volume_hist[0] + 0.001) for x in volume_hist]
 
-    max_volume1 = max(stock_data.iloc[i - pre_stop1:i, 7])
-    max_volume2 = max(stock_data.iloc[i - pre_stop2:i, 7])
-    current_volume = stock_data.iloc[i, 7]
+    print('get one')
+    dataset = []
+    dataset.extend(price_ratio[1:])
+    dataset.extend(volume_ratio[1:])
+    dataset.extend([up_down])
+    return dataset
 
-    try:
-        dataset = [max_price2 / max_price1, current_price / max_price1, max_date1, max_date2,
-                   max_volume2 / max_volume1, current_volume / max_volume1, up_down]
-        return dataset
-    except:
-        return []
 
 dataset_all = []
 count = 1
@@ -61,7 +57,7 @@ for name in name_list:
     else:
         for i in range(pre_stop1, stock_on_day - af_stop):
             index = i - pre_stop1
-            start_date = stock_data.iloc[index+20, 1]
+            start_date = stock_data.iloc[index+af_stop, 1]
             end_date = stock_data.iloc[index+pre_stop1 + af_stop, 1]
             flag = True
             for stop_day in stop_info[stock_code]:
@@ -73,7 +69,7 @@ for name in name_list:
                 if dataset:
                     dataset_all.append(dataset)
 
-with open('./data/dataset/dataset_all_stg1.pkl', 'wb') as f:
+with open('./data/dataset/dataset_all_stg2.pkl', 'wb') as f:
     pickle.dump(dataset_all, f)
 
 print('end')

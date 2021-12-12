@@ -5,7 +5,7 @@ from time import perf_counter
 import numpy as np
 import pickle
 
-with open('./data/dataset/dataset_tmp.pkl', 'rb') as f:
+with open('data/dataset/dataset_300_stg2_12_12.pkl', 'rb') as f:
     dataset = pickle.load(f)
 dataset_tensor = torch.tensor(dataset)
 x = dataset_tensor[:, :6].to(torch.float32)
@@ -37,7 +37,7 @@ target = y
 
 # optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 # optimizer = optim.RMSprop(net.parameters(), lr=0.01)
-optimizer = optim.Adam(net.parameters(), lr=0.01)
+optimizer = optim.Adam(net.parameters(), lr=0.00001)
 criterion = nn.MSELoss()
 
 for name, param in net.named_parameters(): #查看可优化的参数有哪些
@@ -57,12 +57,13 @@ def draw(output, loss):
 
 def train(model, criterion, optimizer, epochs):
     for epoch in range(epochs):
-        outputs = model(inputs)
-        loss = criterion(outputs, target)
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        if epoch % 100 == 0:
+        for i in range(len(inputs)):
+            outputs = model(inputs[i])
+            loss = criterion(outputs, target[i])
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+        if epoch % 1 == 0:
             # draw(outputs, loss)
             print(epoch,"===", loss)
     return model, loss

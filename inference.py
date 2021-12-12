@@ -22,7 +22,7 @@ inference.load_state_dict(torch.load("model2.pkl"))
 
 import pickle
 
-with open('./data/dataset/dataset_tmp.pkl', 'rb') as f:
+with open('data/dataset/dataset_tmp.pkl', 'rb') as f:
     dataset = pickle.load(f)
 dataset_tensor = torch.tensor(dataset)
 x = dataset_tensor[:, :6].to(torch.float32)
