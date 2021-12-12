@@ -27,6 +27,6 @@ with open('./data/dataset/dataset_tmp.pkl', 'rb') as f:
 dataset_tensor = torch.tensor(dataset)
 x = dataset_tensor[:, :6].to(torch.float32)
 y = torch.unsqueeze(dataset_tensor[:, 6], dim=1).to(torch.float32)
-print(inference(x[0,:]))
-print(y[0])
+print(inference(x[100:200,:]))
+print(y[100:2000])
 

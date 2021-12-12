@@ -31,15 +31,13 @@ class Net(nn.Module):
         x = self.out(x)
         return x
 
-
-
 net = Net(input_feature=6, num_hidden=40, outputs=1)
 inputs = x
 target = y
 
-# optimizer = optim.SGD(net.parameters(), lr=0.0001)
+# optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 # optimizer = optim.RMSprop(net.parameters(), lr=0.01)
-optimizer = optim.Adam(net.parameters(), lr=0.001)
+optimizer = optim.Adam(net.parameters(), lr=0.01)
 criterion = nn.MSELoss()
 
 for name, param in net.named_parameters(): #查看可优化的参数有哪些
@@ -71,7 +69,7 @@ def train(model, criterion, optimizer, epochs):
 
 
 start = perf_counter()
-model, loss = train(net, criterion, optimizer, 100000)
+model, loss = train(net, criterion, optimizer, 10000)
 finish = perf_counter()
 time = finish - start
 torch.save(model, "model1.pkl")
